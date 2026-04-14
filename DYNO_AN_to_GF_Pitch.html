@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DYNO — bAV neu gedacht. Für Ihr Unternehmen.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--purple:#6500ff;--purple-dim:rgba(101,0,255,.15);--orange:#ff5e2c;--bg:#0b0b0d;--surface:#141418;--surface2:#1c1c26;--text:#fff;--text-dim:rgba(255,255,255,.58);--text-muted:rgba(255,255,255,.32);--border:rgba(255,255,255,.08);--insight-bg:rgba(255,255,255,.04);--footer-bg:rgba(11,11,13,.88);--footer-border:rgba(255,255,255,.08);--nav-btn-bg:rgba(255,255,255,.05);--dot-inactive:rgba(255,255,255,.18);--green:#16a34a;--red:#ef4444;}
+html.light{--bg:#fff;--surface:#f5f5f5;--surface2:#efefef;--text:#111;--text-dim:#555;--text-muted:#888;--border:#e0e0e0;--insight-bg:rgba(0,0,0,.03);--footer-bg:rgba(255,255,255,.92);--footer-border:#e0e0e0;--nav-btn-bg:rgba(0,0,0,.05);--dot-inactive:rgba(0,0,0,.15);}
+#theme-toggle{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:999;display:flex;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.tt-opt{display:flex;align-items:center;gap:5px;padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text-muted);cursor:pointer;font-family:'Poppins',sans-serif;border:none;background:transparent;transition:.25s;}
+.tt-opt.active{background:var(--purple);color:#fff;border-radius:20px;}
+.tt-opt svg{width:12px;height:12px;}
+html.light [data-bg="hero"]{background:radial-gradient(ellipse at 15% 55%,rgba(101,0,255,.06) 0%,transparent 55%),radial-gradient(ellipse at 85% 25%,rgba(255,94,44,.05) 0%,transparent 45%),#fff!important;}
+html.light [data-bg="glow"]{background:radial-gradient(ellipse at 70% 25%,rgba(101,0,255,.06) 0%,transparent 50%),#fff!important;}
+html.light [data-bg="end"]{background:radial-gradient(ellipse at 35% 65%,rgba(101,0,255,.06) 0%,transparent 50%),#fff!important;}
+html.light .dot-btn{background:var(--dot-inactive)!important;}
+html.light .dot-btn.active{background:var(--purple)!important;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Poppins',sans-serif;color:var(--text);}
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--purple);transition:width .5s ease;z-index:999;}
+.logo-area{position:fixed;top:16px;left:24px;z-index:999;}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:.06em;}.logo-text .a{color:var(--orange);}
+#global-footer{position:fixed;bottom:0;left:0;right:0;height:34px;display:flex;align-items:center;justify-content:center;background:var(--footer-bg);backdrop-filter:blur(8px);border-top:1px solid var(--footer-border);z-index:998;}
+#global-footer span{font-size:10px;font-weight:500;color:var(--text-muted);letter-spacing:.7px;}
+#global-footer em{color:var(--text-muted);font-style:normal;margin:0 8px;opacity:.4;}
+#slide-counter{position:fixed;top:20px;right:24px;font-size:11px;color:var(--text-muted);letter-spacing:.5px;z-index:999;font-weight:500;}
+#nav-dots{position:fixed;bottom:42px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:999;}
+.dot-btn{width:7px;height:7px;border-radius:50%;background:var(--dot-inactive);border:none;cursor:pointer;transition:.3s;padding:0;}
+.dot-btn.active{background:var(--purple);width:22px;border-radius:4px;}
+#nav-prev,#nav-next{position:fixed;top:50%;transform:translateY(-50%);z-index:998;background:var(--nav-btn-bg);border:1px solid var(--border);color:var(--text-muted);width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
+#nav-prev{left:14px;}#nav-next{right:14px;}
+#nav-prev:hover,#nav-next:hover{background:rgba(101,0,255,.15);border-color:var(--purple);color:var(--purple);}
+#slides{position:fixed;inset:0;overflow:hidden;}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:52px 80px;opacity:0;transform:translateY(26px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto;}
+.slide::-webkit-scrollbar{width:3px;}.slide::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:all;}
+.slide.prev{opacity:0;transform:translateY(-26px);}
+.sl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:12px;}
+.st{font-size:clamp(22px,3vw,38px);font-weight:800;letter-spacing:-.025em;line-height:1.08;margin-bottom:20px;}.st em{font-style:italic;color:var(--purple);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;}
+.four-col{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;}
+@media(min-width:1100px){.four-col{grid-template-columns:repeat(4,1fr);}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.ib{display:flex;align-items:center;gap:13px;background:var(--insight-bg);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin-top:14px;width:100%;}
+.ib .icon{font-size:18px;}.ib p{font-size:13px;color:var(--text-dim);line-height:1.55;}.ib strong{color:var(--text);}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:var(--purple-dim);color:var(--purple);border:1px solid rgba(101,0,255,.25);}
+.pill.orange{background:rgba(255,94,44,.12);color:var(--orange);border-color:rgba(255,94,44,.25);}
+.pill.green{background:rgba(22,163,74,.1);color:var(--green);border-color:rgba(22,163,74,.2);}
+.slide.active [data-a]{animation:fu .5s ease both;}
+.slide.active [data-a="1"]{animation-delay:.06s;}
+.slide.active [data-a="2"]{animation-delay:.18s;}
+.slide.active [data-a="3"]{animation-delay:.32s;}
+.slide.active [data-a="4"]{animation-delay:.46s;}
+.slide.active [data-a="5"]{animation-delay:.6s;}
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.benefit-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.benefit-icon{width:40px;height:40px;border-radius:10px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.benefit-card h4{font-size:14px;font-weight:700;margin-bottom:6px;letter-spacing:-0.01em;}
+.benefit-card p{font-size:12px;color:var(--text-dim);line-height:1.6;}
+.spec-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);gap:20px;}
+.spec-row:last-child{border-bottom:none;}
+.spec-label{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.03em;text-transform:uppercase;flex-shrink:0;}
+.spec-value{font-size:12px;color:var(--text);line-height:1.55;flex:1;text-align:right;font-weight:700;}
+.target-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text-dim);}
+.target-pill strong{color:var(--purple);margin-right:4px;}
+.gutachten-box{background:linear-gradient(135deg,var(--orange) 0%,#ff8050 100%);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;width:100%;color:#fff;}
+.gutachten-box .gb-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.gutachten-box h5{font-size:13px;font-weight:800;margin-bottom:3px;letter-spacing:.02em;}
+.gutachten-box p{font-size:12px;opacity:.92;line-height:1.5;}
+.kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.kpi-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;}
+.kpi-box .kv{font-size:22px;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.kpi-box .kl{font-size:10px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
+.flow-row{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;flex-wrap:nowrap;}
+.flow-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 16px;text-align:center;flex:1;min-width:0;max-width:240px;}
+.flow-arrow{font-size:24px;color:var(--purple);font-weight:700;flex-shrink:0;}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.cost-row:last-child{border-bottom:none;}
+.cost-row .cl{color:var(--text-dim);}
+.cost-row .cv{font-weight:700;}
+.cost-row .cv.bad{color:var(--red);}
+.cost-row .cv.good{color:var(--green);}
+.qa{display:flex;flex-direction:column;gap:5px;width:100%;max-width:760px;margin:0 auto;}
+.qc{background:var(--surface);border:1px solid var(--border);border-radius:10px;text-align:left;overflow:hidden;}
+.qq{font-size:13px;font-weight:700;color:var(--text);padding:13px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s;}
+.qq:hover{background:var(--insight-bg);}
+.qq::after{content:'+';font-size:18px;font-weight:300;color:var(--purple);transition:transform .3s;flex-shrink:0;margin-left:12px;}
+.qc.open .qq::after{content:'−';}
+.qa-a{font-size:12px;color:var(--text-dim);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 18px;}
+.qc.open .qa-a{max-height:340px;padding:0 18px 14px;}
+.qa-a strong{color:var(--text);}
+@media(max-width:900px){.slide{padding:44px 24px 52px;}.two-col,.three-col,.four-col{grid-template-columns:1fr;}.flow-row{flex-direction:column;}.flow-card{max-width:100%;width:100%;}.flow-arrow{transform:rotate(90deg);}}
+</style>
+</head>
+<body>
+<div id="theme-toggle">
+  <button class="tt-opt" id="tt-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Dark</button>
+  <button class="tt-opt active" id="tt-light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>Light</button>
+</div>
+<div class="logo-area"><span class="logo-text">DYNO<span class="a">✦</span></span></div>
+<div id="progress-bar"></div>
+<div id="slide-counter"></div>
+<div id="global-footer"><span>bAV neu gedacht<em>·</em>DYNO GmbH<em>·</em>confidential © 2026</span></div>
+<button id="nav-prev">‹</button>
+<button id="nav-next">›</button>
+<div id="nav-dots"></div>
+
+<div id="slides">
+
+<!-- ═══ 1: TITLE ═══ -->
+<div class="slide active" data-bg="hero" style="background:radial-gradient(ellipse at 15% 55%,rgba(101,0,255,.18) 0%,transparent 55%),radial-gradient(ellipse at 85% 25%,rgba(255,94,44,.1) 0%,transparent 45%),var(--bg);">
+  <div style="text-align:center;max-width:860px;">
+    <div style="margin-bottom:32px;" data-a="1">
+      <span class="logo-text" style="font-size:30px;">DYNO<span class="a">✦</span></span>
+      <span style="font-size:11px;color:var(--text-muted);letter-spacing:.5px;margin-left:12px;">RETTET DIE RENTE</span>
+    </div>
+    <div class="st" style="font-size:clamp(32px,5.5vw,58px);" data-a="2">Betriebliche Altersvorsorge —<br><em>neu gedacht.</em></div>
+    <p style="font-size:15px;color:var(--text-dim);max-width:580px;margin:0 auto;line-height:1.65;" data-a="3">Für Ihr Unternehmen, Ihre Mitarbeitenden — und Sie selbst als Geschäftsführer.</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:24px;flex-wrap:wrap;" data-a="4">
+      <span class="pill">Rechtssicher</span>
+      <span class="pill orange">Kosteneffizient</span>
+      <span class="pill green">Steuerlich optimiert</span>
+    </div>
+    <div style="margin-top:28px;font-size:12px;color:var(--text-muted);" data-a="5">Vorbereitet durch DYNO · Confidential © 2026</div>
+  </div>
+</div>
+
+<!-- ═══ 2: WARUM 5 MIN ZEIT (GF-HOOK) ═══ -->
+<div class="slide" data-bg="glow" style="background:radial-gradient(ellipse at 70% 25%,rgba(101,0,255,.12) 0%,transparent 50%),var(--bg);">
+  <div style="width:100%;max-width:1100px;">
+    <div class="sl" data-a="1">Warum diese 5 Minuten Ihre Zeit wert sind</div>
+    <div class="st" data-a="2">Was hat Ihr Unternehmen <em>davon?</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:24px;line-height:1.65;" data-a="3">bAV ist mehr als ein Mitarbeiter-Benefit — sie ist ein Hebel für Compliance, Kostenstruktur und persönliche Vorsorge der Geschäftsführung. Vier Argumente, bevor wir über Mitarbeitende sprechen:</p>
+    <div class="four-col" data-a="4">
+      <div class="benefit-card" style="border-top:3px solid var(--purple);">
+        <div class="benefit-icon">⚖️</div>
+        <h4>Rechtlich sauberer</h4>
+        <p>BAG-Rechtsprechung & BRSG II verschärfen die Anforderungen an Arbeitgeber. <strong style="color:var(--text);">Nettotarife sind strukturell besser aufgestellt</strong> — keine Provisionsketten, klare Doku.</p>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid var(--orange);">
+        <div class="benefit-icon">💰</div>
+        <h4>Auch für Sie als GF</h4>
+        <p>Bis zu <strong style="color:var(--text);">676 € mtl. steuerfrei</strong> aus der GmbH in die eigene Vorsorge — voll als Betriebsausgabe absetzbar. Über 30 Jahre: signifikanter Mehrwert.</p>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid var(--green);">
+        <div class="benefit-icon">📉</div>
+        <h4>Niedrigere Folgekosten</h4>
+        <p>Keine Provisionsketten, keine versteckte Bestandsbetreuung. <strong style="color:var(--text);">Transparente Plattformgebühr</strong> statt prozentualer Vertriebskosten — kalkulierbar und absetzbar.</p>
+      </div>
+      <div class="benefit-card" style="border-top:3px solid var(--purple);">
+        <div class="benefit-icon">🎯</div>
+        <h4>Weniger Aufwand</h4>
+        <p>Digitale Verwaltung, kein Makler-Pingpong, <strong style="color:var(--text);">DATEV-kompatibel</strong>. Onboarding und laufende Verwaltung über die DYNO-Plattform — minimaler HR-/Buchhaltungsaufwand.</p>
+      </div>
+    </div>
+    <div class="ib" data-a="5"><div class="icon">💡</div><p><strong>Kurz:</strong> Eine moderne bAV-Lösung ist nicht nur „etwas Gutes für die Belegschaft" — sie ist betriebswirtschaftlich, rechtlich und steuerlich besser für das Unternehmen und seine Geschäftsführung.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 3: DAS AKTUELLE ANGEBOT ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">Das aktuelle Angebot — sachlich eingeordnet</div>
+    <div class="st" data-a="2">Danke für das Angebot. <em>Bevor abgeschlossen wird:</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:22px;line-height:1.65;" data-a="3">Klassische bAV-Tarife sind <strong style="color:var(--text);">Marktstandard</strong> — und das ist kein Vorwurf an einen einzelnen Anbieter. Es ist ein <strong style="color:var(--text);">strukturelles Merkmal</strong> dieser Produktklasse. Drei Beobachtungen, die für jede Kaufentscheidung relevant sind:</p>
+    <div class="three-col" data-a="4">
+      <div class="card" style="border-top:3px solid var(--orange);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Beobachtung 1</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Provisionstarife sind systembedingt teurer</h4>
+        <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">Vertriebsprovisionen werden über die ersten 5 Jahre aus den Beiträgen finanziert (typ. <strong style="color:var(--text);">2,5 % der Beitragssumme</strong>). Das Kapital im Vertrag startet niedriger als die Einzahlungen.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--orange);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Beobachtung 2</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Es gibt seit Jahren eine Alternative</h4>
+        <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">Nettotarife enthalten <strong style="color:var(--text);">keine Vertriebsprovisionen</strong>. Sie sind seit längerem etabliert, BaFin-reguliert und werden von denselben Versicherern (Allianz, Alte Leipziger, Stuttgarter, myLife u.a.) angeboten.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--orange);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Beobachtung 3</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Der Effekt ist erheblich</h4>
+        <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">Über die Vertragslaufzeit ergibt sich oft ein Unterschied von <strong style="color:var(--text);">mehreren zehntausend Euro</strong> pro Vertrag — bei identischer Garantie, identischer Fondsauswahl und identischem Versicherer.</p>
+      </div>
+    </div>
+    <div class="gutachten-box" data-a="5" style="margin-top:18px;">
+      <div class="gb-icon">📄</div>
+      <div style="flex:1;">
+        <h5>Eine konkrete Analyse Ihres aktuellen Angebots</h5>
+        <p>finden Sie im <strong>beiliegenden Gutachten</strong> — mit den exakten Kostenpositionen, Auswirkungen auf die Ablaufleistung und einem direkten Tarifvergleich.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4: PROVISIONSTARIF VS NETTOTARIF ═══ -->
+<div class="slide" data-bg="glow" style="background:radial-gradient(ellipse at 70% 25%,rgba(101,0,255,.12) 0%,transparent 50%),var(--bg);">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">#1 · Die Mechanik dahinter</div>
+    <div class="st" data-a="2">Provisionstarif vs. <em>Nettotarif.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:18px;line-height:1.65;" data-a="3">Beides sind Direktversicherungen nach <strong style="color:var(--text);">§ 3 Nr. 63 EStG</strong>. Beides oft beim selben Versicherer. Der Unterschied liegt in den Kosten:</p>
+    <div class="two-col" data-a="4">
+      <div class="card" style="border-top:3px solid var(--red);">
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:14px;">Klassischer Provisionstarif</h4>
+        <div class="cost-row"><span class="cl">Abschlusskosten (α)</span><span class="cv bad">2,5 % BSS · 5 Jahre</span></div>
+        <div class="cost-row"><span class="cl">Beitragskosten (β)</span><span class="cv bad">3 – 8 % p.a.</span></div>
+        <div class="cost-row"><span class="cl">Verwaltungskosten (γ)</span><span class="cv bad">Zusätzlich, oft intransparent</span></div>
+        <div class="cost-row"><span class="cl">Effektiv investiert</span><span class="cv bad">~ 80 – 85 %</span></div>
+        <div style="margin-top:14px;padding:10px;background:rgba(239,68,68,.08);border-radius:8px;border:1px solid rgba(239,68,68,.15);"><p style="font-size:12px;color:var(--red);font-weight:600;">Von 676 € kommen nur ~500–550 € im Vertrag an.</p></div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--purple);background:var(--purple-dim);">
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:14px;">DYNO Nettotarif</h4>
+        <div class="cost-row"><span class="cl">Abschlusskosten (α)</span><span class="cv good">0 €</span></div>
+        <div class="cost-row"><span class="cl">Beitragskosten (β)</span><span class="cv good">0 €</span></div>
+        <div class="cost-row"><span class="cl">Verwaltungskosten (γ)</span><span class="cv" style="color:var(--text);">ab 0,3 % p.a. (transparent)</span></div>
+        <div class="cost-row"><span class="cl">Effektiv investiert</span><span class="cv good">~ 99 %</span></div>
+        <div style="margin-top:14px;padding:10px;background:rgba(22,163,74,.08);border-radius:8px;border:1px solid rgba(22,163,74,.15);"><p style="font-size:12px;color:var(--green);font-weight:600;">676 € rein = ~676 € investiert. Ab Tag 1.</p></div>
+      </div>
+    </div>
+    <div class="ib" data-a="5"><div class="icon">📊</div><p><strong>Beispiel:</strong> Bei 676 €/Monat über 30 Jahre und 7 % Wertentwicklung ergibt sich allein durch den Wegfall der Provisionen ein Mehrkapital von <strong>über 150.000 € pro Vertrag</strong>. Bei einem Team von 20 Mitarbeitenden: ein erheblicher kollektiver Nutzen.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 5: WIE FUNKTIONIERT DYNO ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">#2 · Das Konzept</div>
+    <div class="st" data-a="2">Wie funktioniert <em>DYNO konkret?</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:20px;line-height:1.65;" data-a="3">DYNO ist <strong style="color:var(--text);">keine Versicherung</strong> — sondern eine digitale Plattform und lizenzierter Versicherungsmakler (§ 34d GewO). Das Vertragsverhältnis besteht direkt zwischen Arbeitgeber und Versicherer.</p>
+    <div class="flow-row" data-a="4" style="margin-bottom:18px;">
+      <div class="flow-card">
+        <div style="font-size:24px;margin-bottom:6px;">🏢</div>
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Arbeitgeber</h4>
+        <p style="font-size:11px;color:var(--text-muted);">schließt Vertrag ab</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card" style="border:2px solid var(--purple);background:var(--purple-dim);">
+        <div style="font-size:24px;margin-bottom:6px;">✦</div>
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--purple);">DYNO Plattform</h4>
+        <p style="font-size:11px;color:var(--text-muted);">Software & Verwaltung</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div style="font-size:24px;margin-bottom:6px;">🛡️</div>
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Versicherer</h4>
+        <p style="font-size:11px;color:var(--text-muted);">Allianz, AL, Stuttgarter, myLife</p>
+      </div>
+    </div>
+    <div class="three-col" data-a="5">
+      <div class="benefit-card">
+        <div class="benefit-icon">📋</div>
+        <h4>Rechtsrahmen</h4>
+        <p>Direktversicherung nach <strong style="color:var(--text);">§ 3 Nr. 63 EStG</strong>. Klassischer Durchführungsweg, voll steuerrechtlich abgesichert. Versorgungszusage liegt vor.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">💼</div>
+        <h4>Geschäftsmodell</h4>
+        <p>DYNO verdient an einer <strong style="color:var(--text);">Software-Lizenz</strong> (ab 19 €/Mo + 9 € pro Vertrag) — nicht an Vertriebsprovisionen. Voll als Betriebsausgabe absetzbar.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔐</div>
+        <h4>Sicherheit</h4>
+        <p>Kapital liegt beim Versicherer (BaFin-lizenziert, Protektor-Sicherungsfonds). Bei DYNO-Insolvenz <strong style="color:var(--text);">läuft der Vertrag unverändert weiter</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6: WAS MUSS DER AG BEACHTEN ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">#3 · Was muss der Arbeitgeber beachten?</div>
+    <div class="st" data-a="2">Der Aufwand: <em>minimal.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:20px;line-height:1.65;" data-a="3">Wir wissen, was Geschäftsführung und Buchhaltung an Aufwand schon haben. Deshalb übernimmt DYNO alles, was wir übernehmen können — und der Rest ist ein Standardprozess:</p>
+    <div class="card" data-a="4">
+      <div class="spec-row" style="padding:12px 0;">
+        <div style="flex:1;"><strong style="font-size:13px;">📄 Versorgungszusage & Gesellschafterbeschluss</strong><p style="font-size:11px;color:var(--text-muted);margin-top:2px;">Mustertexte rechtssicher formuliert — DYNO stellt bereit</p></div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);background:rgba(22,163,74,.1);padding:4px 10px;border-radius:8px;">DYNO erledigt</div>
+      </div>
+      <div class="spec-row" style="padding:12px 0;">
+        <div style="flex:1;"><strong style="font-size:13px;">📝 Entgeltumwandlungsvereinbarung</strong><p style="font-size:11px;color:var(--text-muted);margin-top:2px;">Mustervorlage für alle Mitarbeitenden — digital signierbar</p></div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);background:rgba(22,163,74,.1);padding:4px 10px;border-radius:8px;">DYNO erledigt</div>
+      </div>
+      <div class="spec-row" style="padding:12px 0;">
+        <div style="flex:1;"><strong style="font-size:13px;">💼 Lohnabrechnung (DATEV, Lexware, Personio)</strong><p style="font-size:11px;color:var(--text-muted);margin-top:2px;">Monatlicher Beitragsbescheid + Jahresübersicht — direkt für die Lohnbuchhaltung</p></div>
+        <div style="font-size:11px;font-weight:700;color:var(--purple);background:var(--purple-dim);padding:4px 10px;border-radius:8px;">Mit Support</div>
+      </div>
+      <div class="spec-row" style="padding:12px 0;">
+        <div style="flex:1;"><strong style="font-size:13px;">👥 Onboarding der Mitarbeitenden</strong><p style="font-size:11px;color:var(--text-muted);margin-top:2px;">Einladung per Klick, Mitarbeitende registrieren sich selbst — kein HR-Aufwand</p></div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);background:rgba(22,163,74,.1);padding:4px 10px;border-radius:8px;">Self-Service</div>
+      </div>
+      <div class="spec-row" style="padding:12px 0;border-bottom:none;">
+        <div style="flex:1;"><strong style="font-size:13px;">🔄 Laufende Verwaltung & Bestandsbetreuung</strong><p style="font-size:11px;color:var(--text-muted);margin-top:2px;">Beitragsänderungen, ETF-Wechsel, neue MA — alles digital auf der Plattform</p></div>
+        <div style="font-size:11px;font-weight:700;color:var(--green);background:rgba(22,163,74,.1);padding:4px 10px;border-radius:8px;">Plattform</div>
+      </div>
+    </div>
+    <div class="ib" data-a="5"><div class="icon">⚡</div><p><strong>Konkret:</strong> Die Einführung dauert ca. 2–3 Stunden für das gesamte Unternehmen (inkl. Abstimmung mit Steuerberatung). Der laufende Aufwand: nahe null.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 7: AG-VORTEILE ═══ -->
+<div class="slide" data-bg="glow" style="background:radial-gradient(ellipse at 70% 25%,rgba(101,0,255,.12) 0%,transparent 50%),var(--bg);">
+  <div style="width:100%;max-width:1100px;">
+    <div class="sl" data-a="1">#4 · Vorteile für das Unternehmen</div>
+    <div class="st" data-a="2">Was bringt das <em>der Firma?</em></div>
+    <div class="four-col" data-a="3" style="margin-top:14px;">
+      <div class="benefit-card">
+        <div class="benefit-icon">⚖️</div>
+        <h4>Compliance & Recht</h4>
+        <p>Volle Erfüllung der AG-Pflichten nach <strong style="color:var(--text);">§ 1a BetrAVG</strong> (Anspruch auf Entgeltumwandlung) und <strong style="color:var(--text);">§ 1a Abs. 1a BetrAVG</strong> (15 % AG-Zuschuss).</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">💸</div>
+        <h4>SV-Ersparnis für AG</h4>
+        <p>Bei jeder Entgeltumwandlung spart der AG <strong style="color:var(--text);">~ 20 % Lohnnebenkosten</strong>. 15 % davon gehen als Pflichtzuschuss an den AN — der Rest bleibt beim Unternehmen.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🎯</div>
+        <h4>Employer Branding</h4>
+        <p>Eine moderne, transparente bAV ist ein <strong style="color:var(--text);">echter Recruiting-Vorteil</strong> — besonders bei Tech, Beratung und Tarifumfeldern, wo Talent knapp ist.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔒</div>
+        <h4>Mitarbeiterbindung</h4>
+        <p>bAV-Verträge schaffen langfristige Bindung — ohne dass das Unternehmen <strong style="color:var(--text);">irgendetwas drauflegt</strong>. Schon kleine AG-Zuschüsse haben große Wirkung.</p>
+      </div>
+    </div>
+    <div class="ib" data-a="4"><div class="icon">📊</div><p><strong>Realität:</strong> Über 500 Unternehmen — von Europa-Park über Freeletics bis sevdesk — setzen DYNO bereits ein. Der Hauptgrund ist nicht „Mitarbeiter-Benefit", sondern der Mix aus <strong>Compliance, Kostenstruktur und persönlicher Vorsorge der Geschäftsführung</strong>.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 8: GF-SELBSTNUTZEN (ZENTRAL) ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">#5 · Für Sie als Geschäftsführer:in</div>
+    <div class="st" data-a="2">Der wichtigste Punkt: <em>Sie selbst.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:20px;line-height:1.65;" data-a="3">Was viele übersehen: bAV ist <strong style="color:var(--text);">nicht nur ein Mitarbeiter-Thema</strong>. Als Geschäftsführer:in oder Gesellschafter-GF können Sie selbst denselben steuerlichen Hebel nutzen — und das ist oft der größte einzelne Vorteil:</p>
+    <div class="two-col" data-a="4">
+      <div>
+        <div class="card" style="margin-bottom:12px;border-left:3px solid var(--purple);">
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Bis zu 676 € / Monat steuerfrei</h4>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">Aus der GmbH direkt in Ihre eigene Vorsorge — nach <strong style="color:var(--text);">§ 3 Nr. 63 EStG</strong>. Voll als Betriebsausgabe absetzbar, kein geldwerter Vorteil.</p>
+        </div>
+        <div class="card" style="margin-bottom:12px;border-left:3px solid var(--green);">
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Brutto-Netto-Hebel</h4>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">676 € brutto kosten die GmbH 676 €. Privat müssten Sie dafür ~<strong style="color:var(--text);">1.200 € verdienen</strong> und versteuern. Das ist der eigentliche Hebel.</p>
+        </div>
+        <div class="card" style="border-left:3px solid var(--orange);">
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Auch für GGF</h4>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.6;">Auch beherrschende Gesellschafter-Geschäftsführer können bAV nutzen — sofern marktüblich und sauber dokumentiert. Wir liefern Mustertexte.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="background:var(--purple-dim);border:1px solid rgba(101,0,255,.3);text-align:center;height:100%;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Hochrechnung über 30 Jahre</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Bei 676 €/Monat, 7 % p.a.</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);margin-top:14px;">Privat angespart:</div>
+          <div style="font-size:24px;font-weight:800;color:var(--orange);">~ 460.000 €</div>
+          <div style="width:60px;height:1px;background:var(--border);margin:14px auto;"></div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);">DYNO bAV (Nettotarif):</div>
+          <div style="font-size:32px;font-weight:800;color:var(--purple);">~ 615.000 €</div>
+          <div style="margin-top:16px;padding:10px;background:rgba(22,163,74,.08);border-radius:8px;border:1px solid rgba(22,163,74,.15);">
+            <p style="font-size:12px;color:var(--green);font-weight:600;">+ 155.000 € Mehrkapital — nur für Sie.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ib" data-a="5"><div class="icon">💡</div><p><strong>Im Klartext:</strong> Sie führen bAV im Unternehmen ein — und können denselben Hebel für Ihre eigene Altersvorsorge nutzen. Die Mitarbeitenden profitieren, Sie persönlich profitieren, das Unternehmen erfüllt seine Pflichten. Drei Gewinner.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 9: VORTEILE FÜR MITARBEITENDE ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">#6 · Für Ihre Mitarbeitenden</div>
+    <div class="st" data-a="2">Was Mitarbeitende <em>davon haben.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:20px;line-height:1.65;" data-a="3">Derselbe steuerliche Hebel — skaliert auf die ganze Belegschaft. Und alles, was die Mitarbeiterbindung stärkt, zahlt mittelbar wieder auf das Unternehmen ein:</p>
+    <div class="three-col" data-a="4">
+      <div class="benefit-card">
+        <div class="benefit-icon">💰</div>
+        <h4>Mehr Netto vom Brutto</h4>
+        <p>Steuer- und SV-Vorteile reduzieren den Eigenanteil. Aus 100 € Eigenbeitrag werden effektiv ~50 € Netto-Verzicht — bei vollem Sparvolumen.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📈</div>
+        <h4>Echte Rendite</h4>
+        <p>ETF-basierte Anlage statt klassischer Garantieprodukte. Bei voller Laufzeit oft <strong style="color:var(--text);">2–3x mehr Endkapital</strong> als bei klassischen Provisionstarifen.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📱</div>
+        <h4>Volle Transparenz</h4>
+        <p>Mitarbeitende sehen jederzeit ihren aktuellen Vertragswert, ETF-Performance und Beitragshistorie — über die DYNO-App.</p>
+      </div>
+    </div>
+    <div class="ib" data-a="5" style="margin-top:18px;"><div class="icon">🤝</div><p><strong>Aus AG-Sicht:</strong> Ein attraktives bAV-Angebot ist heute Standard-Erwartung — besonders bei jüngeren Talenten. Die AG-Kosten sind dabei <strong>überschaubar bis null</strong>: Ein Pflichtzuschuss von 15 % wird durch die SV-Ersparnis fast vollständig refinanziert.</p></div>
+  </div>
+</div>
+
+<!-- ═══ 10: FAQ ═══ -->
+<div class="slide">
+  <div style="width:100%;max-width:900px;">
+    <div class="sl" data-a="1" style="text-align:center;">#7 · Häufige Fragen</div>
+    <div class="st" data-a="2" style="text-align:center;">Was Geschäftsführer <em>typischerweise fragen.</em></div>
+    <div class="qa" data-a="3" style="margin-top:14px;">
+      <div class="qc"><div class="qq">Können wir das auch kostenneutral einführen?</div><div class="qa-a">Ja. Mehrere Wege: <strong>(1)</strong> Bei jeder Entgeltumwandlung spart der AG ohnehin <strong>~ 20 % Sozialabgaben</strong> — der gesetzliche Pflichtzuschuss von 15 % refinanziert sich daraus fast vollständig. <strong>(2)</strong> Bei der Einführung neuer provisionsfreier Verträge kann der AG-Zuschuss bewusst etwas niedriger angesetzt werden, weil der AN durch den Wegfall der Provisionen ohnehin signifikant mehr Endkapital erhält. <strong>(3)</strong> Bestehende Provisionsverträge müssen nicht angefasst werden — DYNO kann parallel für Neuverträge laufen. Im Ergebnis ist die Einführung in vielen Fällen <strong>kostenneutral oder sogar günstiger</strong> als der Status quo.</div></div>
+      <div class="qc"><div class="qq">Wie verdient DYNO Geld, wenn keine Provisionen fließen?</div><div class="qa-a">Über eine <strong>monatliche Software-Lizenz</strong> (ab 19 €/Mo + 9 € pro Vertrag) — voll als Betriebsausgabe absetzbar. Zusätzlich erhält DYNO eine geringe <strong>Bestandscourtage</strong> vom Versicherer für die laufende Vertragsbetreuung. Was DYNO <strong>nicht</strong> bekommt: Abschlussprovisionen aus dem Vertrag des Mitarbeitenden. Genau das macht den Unterschied — das Geschäftsmodell ist vom Produktverkauf entkoppelt, was auch dokumentierbar und transparent ist.</div></div>
+      <div class="qc"><div class="qq">Was passiert mit bestehenden bAV-Verträgen?</div><div class="qa-a">Bestehende Verträge laufen unverändert weiter — sie müssen nicht angetastet werden. DYNO kann <strong>parallel</strong> für Neuverträge oder neue Mitarbeitende eingeführt werden. Auf Wunsch prüfen wir auch, ob eine Übertragung bestehender Verträge wirtschaftlich sinnvoll ist (Bestandsübertragung via Maklermandat). In den meisten Fällen lohnt sich das ab einer bestimmten Restlaufzeit nicht, weil die Abschlusskosten der Altverträge bereits gezahlt sind.</div></div>
+      <div class="qc"><div class="qq">Was passiert bei einem Arbeitgeberwechsel des Mitarbeiters?</div><div class="qa-a">Der Vertrag ist <strong>unverfallbar</strong> ab Zusage (§ 1b BetrAVG) und gehört dem Mitarbeitenden. Drei Optionen bei Wechsel: <strong>(1) Übertragung</strong> auf den neuen Arbeitgeber nach § 4 Abs. 3 BetrAVG (steuerfrei), <strong>(2)</strong> private Fortführung mit eigenen Beiträgen, <strong>(3)</strong> beitragsfrei stellen — das Kapital bleibt erhalten und arbeitet weiter. Das Unternehmen hat <strong>keine fortlaufenden Verpflichtungen</strong> nach Beendigung des Dienstverhältnisses.</div></div>
+      <div class="qc"><div class="qq">Was passiert, wenn DYNO oder der Versicherer pleitegeht?</div><div class="qa-a">Das Vertragsverhältnis besteht zwischen <strong>Arbeitgeber und Versicherer</strong> — DYNO ist nur Plattform. Bei DYNO-Insolvenz läuft der Vertrag unverändert weiter. Bei Versicherer-Insolvenz greift der <strong>Protektor-Sicherungsfonds</strong> (gesetzlich nach § 124 ff. VAG). Alle DYNO-Versicherer sind BaFin-lizenziert. Bislang ist in Deutschland kein Lebensversicherungs-Kunde durch Insolvenz zu Schaden gekommen.</div></div>
+      <div class="qc"><div class="qq">Wie aufwändig ist die Einführung wirklich?</div><div class="qa-a">Realistisch: <strong>2–3 Stunden für die initiale Einrichtung</strong> (inkl. Abstimmung mit Steuerberatung), danach laufender Aufwand nahe null. DYNO stellt alle Mustertexte (Versorgungszusage, Gesellschafterbeschluss, Entgeltumwandlungsvereinbarung) bereit. Die Mitarbeitenden registrieren sich selbst über die Plattform — kein HR-Aufwand. Die Lohnabrechnung ist DATEV/Lexware/Personio-kompatibel mit monatlichem Beitragsbescheid.</div></div>
+      <div class="qc"><div class="qq">Können wir auch nur den Geschäftsführern bAV anbieten?</div><div class="qa-a">Ja — bAV kann grundsätzlich auch nur für die Geschäftsführung eingerichtet werden. Bei <strong>arbeitgeberfinanzierter bAV</strong> nur für GF gilt aber: Die <strong>Angemessenheit</strong> muss gewahrt sein (BFH-Rechtsprechung), und für beherrschende Gesellschafter-GF gelten zusätzliche Anforderungen (Marktüblichkeit, saubere Doku, Erdienungszeitraum). Bei <strong>Entgeltumwandlung</strong> (AN-finanziert) hat aber jeder Mitarbeitende einen Rechtsanspruch nach § 1a BetrAVG — das lässt sich nicht ausschließen, auch wenn aktiv nichts angeboten wird.</div></div>
+      <div class="qc"><div class="qq">Kann ich das mit unserem Steuerberater abstimmen?</div><div class="qa-a">Sehr gerne — wir empfehlen das sogar ausdrücklich. DYNO stellt eine eigene <strong>Übersichtsseite für Steuerberater</strong> bereit (<a href="https://dyno-steuerberater.vercel.app" target="_blank" style="color:var(--purple);font-weight:600;text-decoration:none;">dyno-steuerberater.vercel.app</a>) mit allen relevanten Infos zu § 3 Nr. 63 EStG, BBG-Anrechnung, Bilanzierung und den bereitgestellten Mustertexten. Bei fachlichen Rückfragen steht unser Team direkt zur Verfügung — ohne Mehraufwand für Ihre Kanzlei.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 11: TRUST · WER IST DYNO ═══ -->
+<div class="slide" data-bg="glow" style="background:radial-gradient(ellipse at 70% 25%,rgba(101,0,255,.12) 0%,transparent 50%),var(--bg);">
+  <div style="width:100%;max-width:1000px;">
+    <div class="sl" data-a="1">Wer ist DYNO?</div>
+    <div class="st" data-a="2">Die Plattform für <em>moderne bAV.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);max-width:680px;margin-bottom:18px;line-height:1.65;" data-a="3">DYNO ist eine in Offenburg ansässige GmbH, lizenzierter Versicherungsmakler nach <strong style="color:var(--text);">§ 34d GewO</strong> und Plattform für provisionsfreie betriebliche Altersvorsorge. Über 500 Unternehmen vertrauen bereits auf DYNO.</p>
+    <div class="kpi-strip" data-a="4">
+      <div class="kpi-box"><div class="kv">500+</div><div class="kl">Unternehmen</div></div>
+      <div class="kpi-box"><div class="kv" style="color:var(--purple);">20.000+</div><div class="kl">Arbeitnehmende</div></div>
+      <div class="kpi-box"><div class="kv" style="color:var(--orange);font-size:16px;">⭐ 4.9 / 5</div><div class="kl">OMR Reviews · Top Rated 2025</div></div>
+    </div>
+    <div data-a="5" style="margin-top:24px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:12px;">Unsere Versicherungspartner — alle BaFin-lizenziert</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+        <div class="target-pill" style="font-weight:700;">Allianz</div>
+        <div class="target-pill" style="font-weight:700;">Alte Leipziger</div>
+        <div class="target-pill" style="font-weight:700;">Stuttgarter</div>
+        <div class="target-pill" style="font-weight:700;">myLife</div>
+        <div class="target-pill" style="font-weight:700;">LV 1871</div>
+        <div class="target-pill" style="font-weight:700;">Continentale</div>
+        <div class="target-pill" style="font-weight:700;">Condor</div>
+        <div class="target-pill" style="font-weight:700;">Volkswohl Bund</div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px;opacity:.55;">
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">Europa-Park</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">Freeletics</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">Schöffel</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">sevdesk</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">roadsurfer</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">happybrush</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">·</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted);">Blinkist</span>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:11px;color:var(--text-muted);">
+        <span><strong style="color:var(--purple);">🛡️</strong> BaFin-Aufsicht (§ 124 ff. VAG)</span>
+        <span><strong style="color:var(--purple);">💰</strong> Protektor-Sicherungsfonds</span>
+        <span><strong style="color:var(--purple);">📰</strong> Bekannt aus Handelsblatt, Gründerszene</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 11: CTA ═══ -->
+<div class="slide" data-bg="end" style="background:radial-gradient(ellipse at 35% 65%,rgba(101,0,255,.18) 0%,transparent 50%),var(--bg);">
+  <div style="text-align:center;max-width:680px;" data-a="1">
+    <div style="font-size:18px;font-weight:800;letter-spacing:.06em;margin-bottom:24px;">DYNO<span style="color:var(--orange);">✦</span> <span style="font-weight:400;color:var(--text-muted);">RETTET DIE RENTE</span></div>
+    <div style="font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-0.05em;line-height:1;" data-a="2">Lassen Sie uns<br>15 Minuten <em>sprechen.</em></div>
+    <p style="font-size:14px;color:var(--text-dim);margin-top:24px;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6;" data-a="3">In einem kurzen Erstgespräch zeigen wir Ihnen konkret, wie die Einführung in Ihrem Unternehmen aussehen würde — inklusive Berechnung für Sie persönlich als Geschäftsführer:in.</p>
+    <div data-a="4" style="margin-top:28px;">
+      <a href="https://meetings-eu1.hubspot.com/luis-weber?uuid=f10dbd6a-c358-4314-8101-6c93a6d006c0" target="_blank" style="display:inline-block;padding:14px 32px;background:var(--purple);color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;letter-spacing:.02em;">Termin direkt buchen →</a>
+    </div>
+    <div style="margin-top:28px;" data-a="5">
+      <h4 style="font-size:15px;font-weight:700;">Luis Weber</h4>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">CEO & Co-Founder · DYNO GmbH</p>
+      <p style="font-size:13px;margin-top:10px;"><a href="mailto:luis@heydyno.de" style="color:var(--purple);text-decoration:none;font-weight:600;">luis@heydyno.de</a> · +49 781 12559970</p>
+      <p style="font-size:13px;"><a href="https://heydyno.de" target="_blank" style="color:var(--text-dim);text-decoration:none;">heydyno.de</a></p>
+    </div>
+    <div style="margin-top:20px;opacity:.4;font-size:10px;color:var(--text-muted);" data-a="5">500+ Unternehmen · 20.000+ Arbeitnehmende · OMR Reviews 4.9 ★</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const T=12;let c=0;
+const d=document.getElementById('nav-dots');
+for(let i=0;i<T;i++){const b=document.createElement('button');b.className='dot-btn'+(i===0?' active':'');b.onclick=()=>go(i);d.appendChild(b);}
+function go(n){const s=document.querySelectorAll('.slide');s[c].classList.remove('active');s[c].classList.add('prev');const p=c;setTimeout(()=>s[p].classList.remove('prev'),600);c=Math.max(0,Math.min(T-1,n));s[c].classList.add('active');upd();}
+function next(){if(c<T-1)go(c+1);}
+function prev(){if(c>0)go(c-1);}
+function upd(){document.getElementById('progress-bar').style.width=((c+1)/T*100)+'%';document.getElementById('slide-counter').textContent=String(c+1).padStart(2,'0')+' / '+String(T).padStart(2,'0');document.querySelectorAll('.dot-btn').forEach((d,i)=>d.classList.toggle('active',i===c));}
+document.addEventListener('keydown',e=>{if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();next();}if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();prev();}});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){dx<0?next():prev();}});
+function setTheme(t){const dk=(t==='dark');document.documentElement.classList.toggle('light',!dk);document.getElementById('tt-dark').classList.toggle('active',dk);document.getElementById('tt-light').classList.toggle('active',!dk);}
+document.getElementById('nav-next').addEventListener('click',next);
+document.getElementById('nav-prev').addEventListener('click',prev);
+document.getElementById('tt-dark').addEventListener('click',()=>setTheme('dark'));
+document.getElementById('tt-light').addEventListener('click',()=>setTheme('light'));
+document.querySelectorAll('.qq').forEach(q=>q.addEventListener('click',function(){const p=q.parentElement;const wasOpen=p.classList.contains('open');document.querySelectorAll('.qc.open').forEach(el=>el.classList.remove('open'));if(!wasOpen)p.classList.add('open');}));
+setTheme('light');
+upd();
+</script>
+</body>
+</html>
